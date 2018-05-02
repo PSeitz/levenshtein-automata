@@ -129,7 +129,7 @@ impl<'a> Utf8DFAStateBuilder<'a> {
         self.dfa_builder.transitions[from_state_id as usize][b as usize] = to_state_id;
     }
 
-    pub fn add_transition(&mut self, chr: char, to_state_id: u32) {
+    fn _add_transition(&mut self, chr: char, to_state_id: u32) {
         let mut buffer = [0u8; 4];
 
         // The char may translate into more than one bytes.
@@ -161,6 +161,21 @@ impl<'a> Utf8DFAStateBuilder<'a> {
             to_state_id_decoded,
         );
     }
+
+    pub fn add_transition(&mut self, chr: char, to_state_id: u32) {
+        if self.dfa_builder.ignore_case {
+            let lower_char = chr.to_lowercase().next().unwrap();
+            let upper_char = chr.to_uppercase().next().unwrap();
+            if lower_char != upper_char {
+                self._add_transition(lower_char, to_state_id);
+                self._add_transition(upper_char, to_state_id);
+            }else{
+                self._add_transition(chr, to_state_id);
+            }
+        }else{
+            self._add_transition(chr, to_state_id);
+        }
+    }
 }
 
 
@@ -174,6 +189,7 @@ pub struct Utf8DFABuilder {
     initial_state: u32,
     num_states: u32,
     max_num_states: u32,
+    ignore_case: bool,
 }
 
 
@@ -203,6 +219,22 @@ impl Utf8DFABuilder {
             initial_state: 0u32,
             num_states: 0u32,
             max_num_states: max_num_states as u32,
+            ignore_case: false,
+        }
+    }
+    /// Creates a new dictionary.
+    ///
+    /// The `builder` will only accept `state_id` that are
+    /// lower than `max_num_states`.
+    pub fn with_max_num_states_and_ignore_case(max_num_states: usize, ignore_case:bool) -> Utf8DFABuilder {
+        Utf8DFABuilder {
+            index: vec![None; max_num_states * 4 + 3],
+            distances: Vec::with_capacity(100),
+            transitions: Vec::with_capacity(100),
+            initial_state: 0u32,
+            num_states: 0u32,
+            max_num_states: max_num_states as u32,
+            ignore_case: ignore_case,
         }
     }
 

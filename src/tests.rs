@@ -69,7 +69,7 @@ fn test_levenshtein_dfa_slow() {
 
     for left in test_sample.lefts() {
         for m in 0..4u8 {
-            let dfa = parametric_dfas[m as usize].build_dfa(&left);
+            let dfa = parametric_dfas[m as usize].build_dfa(&left, false);
             for right in test_sample.rights() {
                 let expected = levenshtein::levenshtein(&left, &right) as u8;
                 let expected_distance = make_distance(expected, m);
@@ -108,7 +108,7 @@ fn test_levenshtein_parametric_dfa_long() {
                     abcdefghijlmnopqrstuvwxyz\
                     abcdefghijlmnopqrstuvwxyz\
                     abcdefghijlmnopqrstuvwxyz";
-    let dfa = param_dfa.build_dfa(test_str);
+    let dfa = param_dfa.build_dfa(test_str, false);
     {
         let result_distance = dfa.eval(test_str);
         assert_eq!(result_distance, Distance::Exact(0));
@@ -208,6 +208,7 @@ impl TestSample {
 fn test_damerau() {
     let nfa = LevenshteinNFA::levenshtein(2, true);
     test_symmetric(&nfa, "abc", "abc", Distance::Exact(0));
+    // test_symmetric(&nfa, "abc", "Abc", Distance::Exact(0));
     test_symmetric(&nfa, "abc", "abcd", Distance::Exact(1));
     test_symmetric(&nfa, "abcdef", "abddef", Distance::Exact(1));
     test_symmetric(&nfa, "abcdef", "abdcef", Distance::Exact(1));
@@ -217,7 +218,7 @@ fn test_damerau() {
 fn test_levenshtein_dfa() {
     let nfa = LevenshteinNFA::levenshtein(2, false);
     let parametric_dfa = ParametricDFA::from_nfa(&nfa);
-    let dfa = parametric_dfa.build_dfa("abcabcaaabc");
+    let dfa = parametric_dfa.build_dfa("abcabcaaabc", false);
     assert_eq!(dfa.num_states(), 273);
 }
 
@@ -225,7 +226,7 @@ fn test_levenshtein_dfa() {
 fn test_utf8_simple() {
     let nfa = LevenshteinNFA::levenshtein(1, false);
     let parametric_dfa = ParametricDFA::from_nfa(&nfa);
-    let dfa = parametric_dfa.build_dfa("あ");
+    let dfa = parametric_dfa.build_dfa("あ", false);
     assert_eq!(dfa.eval("あ"), Distance::Exact(0u8));
     assert_eq!(dfa.eval("ぃ"), Distance::Exact(1u8));
 }
@@ -235,7 +236,7 @@ fn test_simple() {
     let q: &str = "abcdef";
     let nfa = LevenshteinNFA::levenshtein(2, false);
     let parametric_dfa = ParametricDFA::from_nfa(&nfa);
-    let dfa = parametric_dfa.build_dfa(q);
+    let dfa = parametric_dfa.build_dfa(q, false);
     assert_eq!(dfa.eval(q), Distance::Exact(0u8));
     assert_eq!(dfa.eval("abcdf"), Distance::Exact(1u8));
     assert_eq!(dfa.eval("abcdgf"), Distance::Exact(1u8));
@@ -247,7 +248,7 @@ fn test_jp() {
     let q: &str = "寿司は焦げられない";
     let nfa = LevenshteinNFA::levenshtein(2, false);
     let parametric_dfa = ParametricDFA::from_nfa(&nfa);
-    let dfa = parametric_dfa.build_dfa(q);
+    let dfa = parametric_dfa.build_dfa(q, false);
     assert_eq!(dfa.eval(q), Distance::Exact(0u8));
     assert_eq!(dfa.eval("寿司は焦げられな"), Distance::Exact(1u8));
     assert_eq!(dfa.eval("寿司は焦げられなI"), Distance::Exact(1u8));
@@ -262,6 +263,6 @@ fn test_jp2() {
     let q: &str = "寿a";
     let nfa = LevenshteinNFA::levenshtein(1, false);
     let parametric_dfa = ParametricDFA::from_nfa(&nfa);
-    let dfa = parametric_dfa.build_dfa(q);
+    let dfa = parametric_dfa.build_dfa(q, false);
     assert_eq!(dfa.eval(q), Distance::Exact(0u8));
 }

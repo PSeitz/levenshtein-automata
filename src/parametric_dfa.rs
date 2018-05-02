@@ -108,7 +108,7 @@ impl ParametricDFA {
         self.transitions.len() / self.transition_stride
     }
 
-    pub fn build_dfa(&self, query: &str) -> DFA {
+    pub fn build_dfa(&self, query: &str, ignore_case:bool) -> DFA {
 
         let query_chars: Vec<char> = query.chars().collect();
         let query_len = query_chars.len();
@@ -122,7 +122,7 @@ impl ParametricDFA {
         let initial_state_id =
             parametric_state_index.get_or_allocate(ParametricDFA::initial_state());
 
-        let mut dfa_builder = Utf8DFABuilder::with_max_num_states(max_num_states);
+        let mut dfa_builder = Utf8DFABuilder::with_max_num_states_and_ignore_case(max_num_states, ignore_case);
         let mask = (1 << self.diameter) - 1;
 
         for state_id in 0.. {

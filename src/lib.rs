@@ -94,7 +94,7 @@ impl LevenshteinAutomatonBuilder {
     /// or not.
     ///
     /// For instance for `d=2` and with transposition, `C=68`.
-    pub fn build_dfa(&self, query: &str) -> DFA {
-        self.parametric_dfa.build_dfa(query)
+    pub fn build_dfa(&self, query: &str, ignore_case:bool) -> DFA {
+        self.parametric_dfa.build_dfa(query, ignore_case)
     }
 }
