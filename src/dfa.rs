@@ -31,7 +31,7 @@ pub const SINK_STATE: u32 = 0u32;
 /// #   // Building this factory is not free.
 /// #   let lev_automaton_builder = LevenshteinAutomatonBuilder::new(2, true);
 /// #  // We can now build an entire dfa.
-/// #  let dfa = lev_automaton_builder.build_dfa("Levenshtein");
+/// #  let dfa = lev_automaton_builder.build_dfa("Levenshtein", false);
 /// # let str = "Levenshtain";
 /// let mut state = dfa.initial_state();
 /// for &byte in str.as_bytes() {
@@ -103,7 +103,10 @@ impl fst::Automaton for DFA {
     }
 
     fn can_match(&self, state: &u32) -> bool {
-        *state != SINK_STATE
+        match self.distance(*state) {
+            Distance::AtLeast(_) => false,
+            _ => true,
+        }
     }
 
     fn accept(&self, state: &u32, byte: u8) -> u32 {

@@ -15,7 +15,7 @@ use levenshtein_automata::{LevenshteinAutomatonBuilder, Distance};
 let lev_automaton_builder = LevenshteinAutomatonBuilder::new(2, true);
 
 // We can now build an entire dfa.
-let dfa = lev_automaton_builder.build_dfa("Levenshtein");
+let dfa = lev_automaton_builder.build_dfa("Levenshtein", false);
 
 let mut state = dfa.initial_state();
     for &b in "Levenshtain".as_bytes() {
