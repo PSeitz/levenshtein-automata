@@ -39,7 +39,7 @@ fn test_levenshtein() {
 fn test_dead_state() {
     let nfa = LevenshteinNFA::levenshtein(2, false);
     let parametric_dfa = ParametricDFA::from_nfa(&nfa);
-    let dfa = parametric_dfa.build_dfa("abcdefghijklmnop");
+    let dfa = parametric_dfa.build_dfa("abcdefghijklmnop", false);
     let mut state = dfa.initial_state();
     state = dfa.transition(state, b'X');
     assert!(state != 0);

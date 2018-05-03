@@ -103,10 +103,7 @@ impl fst::Automaton for DFA {
     }
 
     fn can_match(&self, state: &u32) -> bool {
-        match self.distance(*state) {
-            Distance::AtLeast(_) => false,
-            _ => true,
-        }
+        *state != SINK_STATE
     }
 
     fn accept(&self, state: &u32, byte: u8) -> u32 {
