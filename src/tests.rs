@@ -36,6 +36,30 @@ fn test_levenshtein() {
 
 
 #[test]
+fn test_super() {
+    let nfa = LevenshteinNFA::levenshtein(1, false);
+    let parametric_dfa = ParametricDFA::from_nfa(&nfa);
+    let dfa = parametric_dfa.build_dfa("Aloo", true);
+
+    let mut state = dfa.initial_state();
+    state = dfa.transition(state, b'a');
+    dbg!(state);
+
+
+    state = dfa.transition(state, b'l');
+    dbg!(state);
+
+    state = dfa.transition(state, b'O');
+    dbg!(state);
+
+    state = dfa.transition(state, b'o');
+    dbg!(state);
+
+    dbg!(state);
+    
+}
+
+#[test]
 fn test_dead_state() {
     let nfa = LevenshteinNFA::levenshtein(2, false);
     let parametric_dfa = ParametricDFA::from_nfa(&nfa);
