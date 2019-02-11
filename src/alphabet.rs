@@ -40,7 +40,7 @@ impl Alphabet {
                         let mut chunk_bits = 0u32;
                         let mut bit = 1u32;
                         for &chr in chunk {
-                            if chr == c {
+                            if chr.to_lowercase().next().unwrap() == c.to_lowercase().next().unwrap() {
                                 chunk_bits |= bit;
                             }
                             bit <<= 1;
