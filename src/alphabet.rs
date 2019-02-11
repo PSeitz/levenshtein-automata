@@ -27,7 +27,7 @@ impl Alphabet {
         self.charset.iter()
     }
 
-    pub fn for_query_chars(query_chars: &[char]) -> Alphabet {
+    pub fn for_query_chars(query_chars: &[char], ignore_case:bool) -> Alphabet {
         let mut charset = Vec::from(query_chars);
         charset.sort();
         charset.dedup();
@@ -40,8 +40,14 @@ impl Alphabet {
                         let mut chunk_bits = 0u32;
                         let mut bit = 1u32;
                         for &chr in chunk {
-                            if chr.to_lowercase().next().unwrap() == c.to_lowercase().next().unwrap() {
-                                chunk_bits |= bit;
+                            if ignore_case{
+                                if chr.to_lowercase().next().unwrap() == c.to_lowercase().next().unwrap() {
+                                    chunk_bits |= bit;
+                                }
+                            }else{
+                                if chr == c {
+                                    chunk_bits |= bit;
+                                }
                             }
                             bit <<= 1;
                         }
@@ -64,7 +70,7 @@ mod tests {
     #[test]
     fn test_alphabet() {
         let chars: Vec<char> = "happy".chars().collect();
-        let alphabet = Alphabet::for_query_chars(&chars);
+        let alphabet = Alphabet::for_query_chars(&chars, false);
         let mut it = alphabet.iter();
 
         {
@@ -105,7 +111,7 @@ mod tests {
     #[test]
     fn test_long_characteristic() {
         let query_chars: Vec<char> = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaabcabewa".chars().collect();
-        let alphabet = Alphabet::for_query_chars(&query_chars[..]);
+        let alphabet = Alphabet::for_query_chars(&query_chars[..], false);
         let mut alphabet_it = alphabet.iter();
         {
             let &(ref c, ref chi) = alphabet_it.next().unwrap();

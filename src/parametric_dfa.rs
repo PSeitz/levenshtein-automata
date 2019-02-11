@@ -112,7 +112,7 @@ impl ParametricDFA {
 
         let query_chars: Vec<char> = query.chars().collect();
         let query_len = query_chars.len();
-        let alphabet = Alphabet::for_query_chars(&query_chars);
+        let alphabet = Alphabet::for_query_chars(&query_chars, ignore_case);
 
         let mut parametric_state_index = ParametricStateIndex::new(query_len, self.num_states());
         let max_num_states = parametric_state_index.max_num_states();

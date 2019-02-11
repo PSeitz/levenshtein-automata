@@ -36,27 +36,38 @@ fn test_levenshtein() {
 
 
 #[test]
-fn test_super() {
+fn test_case_insensitivity() {
     let nfa = LevenshteinNFA::levenshtein(1, false);
     let parametric_dfa = ParametricDFA::from_nfa(&nfa);
-    let dfa = parametric_dfa.build_dfa("Aloo", true);
+    let dfa = parametric_dfa.build_dfa("Alaoo", true);
 
     let mut state = dfa.initial_state();
     state = dfa.transition(state, b'a');
-    dbg!(state);
-
-
     state = dfa.transition(state, b'l');
-    dbg!(state);
-
+    state = dfa.transition(state, b'a');
     state = dfa.transition(state, b'O');
-    dbg!(state);
-
     state = dfa.transition(state, b'o');
-    dbg!(state);
+    assert_ne!(state, 0);
 
-    dbg!(state);
-    
+    let mut state = dfa.initial_state();
+    state = dfa.transition(state, b'A');
+    state = dfa.transition(state, b'L');
+    state = dfa.transition(state, b'a');
+    state = dfa.transition(state, b'O');
+    state = dfa.transition(state, b'O');
+    assert_ne!(state, 0);
+
+    let nfa = LevenshteinNFA::levenshtein(0, false);
+    let parametric_dfa = ParametricDFA::from_nfa(&nfa);
+    let dfa = parametric_dfa.build_dfa("Alaoo", false);
+    let mut state = dfa.initial_state();
+    state = dfa.transition(state, b'a');
+    state = dfa.transition(state, b'l');
+    state = dfa.transition(state, b'a');
+    state = dfa.transition(state, b'o');
+    state = dfa.transition(state, b'o');
+    assert_eq!(state, 0);
+
 }
 
 #[test]
