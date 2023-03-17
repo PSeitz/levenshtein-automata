@@ -88,11 +88,11 @@ fn test_levenshtein_dfa_slow() {
 
     for left in test_sample.lefts() {
         for m in 0..4u8 {
-            let dfa = parametric_dfas[m as usize].build_dfa(&left, false);
+            let dfa = parametric_dfas[m as usize].build_dfa(left, false);
             for right in test_sample.rights() {
-                let expected = levenshtein::levenshtein(&left, &right) as u8;
+                let expected = levenshtein::levenshtein(left, right) as u8;
                 let expected_distance = make_distance(expected, m);
-                let result_distance = dfa.eval(&right);
+                let result_distance = dfa.eval(right);
                 assert_eq!(expected_distance, result_distance);
             }
         }

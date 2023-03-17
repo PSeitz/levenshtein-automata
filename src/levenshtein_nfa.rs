@@ -145,7 +145,7 @@ fn dist(left: u32, right: u32) -> u32 {
 impl LevenshteinNFA {
     pub fn levenshtein(max_distance: u8, transposition: bool) -> LevenshteinNFA {
         LevenshteinNFA {
-            max_distance: max_distance,
+            max_distance,
             damerau: transposition,
         }
     }
