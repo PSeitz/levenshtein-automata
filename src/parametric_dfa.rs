@@ -1,9 +1,8 @@
-use super::dfa::{DFA, Utf8DFABuilder};
-use super::Index;
+use super::alphabet::Alphabet;
+use super::dfa::{Utf8DFABuilder, DFA};
 use super::levenshtein_nfa::Distance;
 use super::levenshtein_nfa::{LevenshteinNFA, MultiState};
-use super::alphabet::Alphabet;
-
+use super::Index;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct ParametricState {
@@ -23,7 +22,6 @@ impl ParametricState {
     }
 }
 
-
 #[derive(Clone, Copy)]
 pub struct Transition {
     dest_shape_id: u32,
@@ -34,17 +32,15 @@ impl Transition {
     fn apply(&self, state: ParametricState) -> ParametricState {
         ParametricState {
             shape_id: self.dest_shape_id,
-            offset:
-                if self.dest_shape_id == 0 {
-                    0 //< We don't need any offset if we are in the dead state.
-                      // This ensures we have only one dead state.
-                } else {
-                    state.offset + self.delta_offset
-                }
+            offset: if self.dest_shape_id == 0 {
+                0 //< We don't need any offset if we are in the dead state.
+                  // This ensures we have only one dead state.
+            } else {
+                state.offset + self.delta_offset
+            },
         }
     }
 }
-
 
 struct ParametricStateIndex {
     state_index: Vec<Option<u32>>,
@@ -72,8 +68,8 @@ impl ParametricStateIndex {
     }
 
     fn get_or_allocate(&mut self, parametric_state: ParametricState) -> u32 {
-        let bucket = (parametric_state.shape_id as usize) * self.num_offsets +
-            parametric_state.offset as usize;
+        let bucket = (parametric_state.shape_id as usize) * self.num_offsets
+            + parametric_state.offset as usize;
         if let Some(state_id) = self.state_index[bucket] {
             return state_id;
         }
@@ -108,8 +104,7 @@ impl ParametricDFA {
         self.transitions.len() / self.transition_stride
     }
 
-    pub fn build_dfa(&self, query: &str, ignore_case:bool) -> DFA {
-
+    pub fn build_dfa(&self, query: &str, ignore_case: bool) -> DFA {
         let query_chars: Vec<char> = query.chars().collect();
         let query_len = query_chars.len();
         let alphabet = Alphabet::for_query_chars(&query_chars);
@@ -122,7 +117,8 @@ impl ParametricDFA {
         let initial_state_id =
             parametric_state_index.get_or_allocate(ParametricDFA::initial_state());
 
-        let mut dfa_builder = Utf8DFABuilder::with_max_num_states_and_ignore_case(max_num_states, ignore_case);
+        let mut dfa_builder =
+            Utf8DFABuilder::with_max_num_states_and_ignore_case(max_num_states, ignore_case);
         let mask = (1 << self.diameter) - 1;
 
         for state_id in 0.. {
@@ -185,9 +181,7 @@ impl ParametricDFA {
         self.transitions[self.transition_stride * state.shape_id as usize + chi as usize]
     }
 
-
     pub fn from_nfa(nfa: &LevenshteinNFA) -> ParametricDFA {
-
         let mut index: Index<MultiState> = Index::new();
         index.get_or_allocate(&MultiState::empty());
         let initial_state = nfa.initial_states();

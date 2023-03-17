@@ -30,7 +30,8 @@ impl MultiState {
     }
 
     pub fn normalize(&mut self) -> u32 {
-        let min_offset: u32 = self.states
+        let min_offset: u32 = self
+            .states
             .iter()
             .map(|state| state.offset)
             .min()
@@ -61,7 +62,6 @@ impl MultiState {
     }
 }
 
-
 /// Levenshtein Distance computed by a Levenshtein Automaton.
 ///
 /// Levenshtein automata can only compute the exact Levenshtein distance
@@ -87,8 +87,7 @@ impl Distance {
     /// ```
     pub fn to_u8(&self) -> u8 {
         match *self {
-            Distance::Exact(d) |
-            Distance::AtLeast(d) => d,
+            Distance::Exact(d) | Distance::AtLeast(d) => d,
         }
     }
 }
@@ -282,6 +281,5 @@ impl NFAState {
         } else {
             u32::from(other.distance) > u32::from(self.distance) + delta_offset
         }
-
     }
 }

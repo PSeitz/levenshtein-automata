@@ -1,6 +1,5 @@
 use std::slice;
 
-
 #[derive(Clone)]
 pub struct FullCharacteristicVector(Vec<u32>);
 
@@ -40,7 +39,9 @@ impl Alphabet {
                         let mut chunk_bits = 0u32;
                         let mut bit = 1u32;
                         for &chr in chunk {
-                            if chr.to_lowercase().next().unwrap() == c.to_lowercase().next().unwrap() {
+                            if chr.to_lowercase().next().unwrap()
+                                == c.to_lowercase().next().unwrap()
+                            {
                                 chunk_bits |= bit;
                             }
                             bit <<= 1;
@@ -55,7 +56,6 @@ impl Alphabet {
         Alphabet { charset: charset }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

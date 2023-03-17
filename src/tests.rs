@@ -1,7 +1,7 @@
 extern crate levenshtein;
 
 use std::collections::HashSet;
-use {ParametricDFA, LevenshteinNFA, Distance};
+use {Distance, LevenshteinNFA, ParametricDFA};
 
 fn make_distance(n: u8, max_distance: u8) -> Distance {
     if n > max_distance {
@@ -20,12 +20,10 @@ fn test_levenshtein_nfa_util(left: &str, right: &str) {
     }
 }
 
-
 fn test_symmetric(lev: &LevenshteinNFA, left: &str, right: &str, expected: Distance) {
     assert_eq!(lev.compute_distance(left, right), expected);
     assert_eq!(lev.compute_distance(right, left), expected);
 }
-
 
 #[test]
 fn test_levenshtein() {
@@ -33,7 +31,6 @@ fn test_levenshtein() {
     test_levenshtein_nfa_util("abc", "abcd");
     test_levenshtein_nfa_util("aab", "ab");
 }
-
 
 #[test]
 fn test_super() {
@@ -45,7 +42,6 @@ fn test_super() {
     state = dfa.transition(state, b'a');
     dbg!(state);
 
-
     state = dfa.transition(state, b'l');
     dbg!(state);
 
@@ -56,7 +52,6 @@ fn test_super() {
     dbg!(state);
 
     dbg!(state);
-    
 }
 
 #[test]
@@ -153,7 +148,6 @@ fn test_levenshtein_parametric_dfa_long() {
         let result_distance = dfa.eval(test_str);
         assert_eq!(result_distance, Distance::Exact(2));
     }
-
 }
 
 fn combinations(alphabet: &[char], len: usize) -> Vec<String> {
@@ -164,9 +158,8 @@ fn combinations(alphabet: &[char], len: usize) -> Vec<String> {
             .iter()
             .cloned()
             .flat_map(|letter: char| {
-                prev.iter().map(
-                    move |prefix| format!("{}{}", prefix, letter),
-                )
+                prev.iter()
+                    .map(move |prefix| format!("{}{}", prefix, letter))
             })
             .collect();
         result.extend_from_slice(&prev[..]);
@@ -276,10 +269,7 @@ fn test_jp() {
     assert_eq!(dfa.eval(q), Distance::Exact(0u8));
     assert_eq!(dfa.eval("寿司は焦げられな"), Distance::Exact(1u8));
     assert_eq!(dfa.eval("寿司は焦げられなI"), Distance::Exact(1u8));
-    assert_eq!(
-        dfa.eval("寿司は焦げられなIい"),
-        Distance::Exact(1u8)
-    );
+    assert_eq!(dfa.eval("寿司は焦げられなIい"), Distance::Exact(1u8));
 }
 
 #[test]

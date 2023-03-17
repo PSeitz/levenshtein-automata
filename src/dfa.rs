@@ -23,9 +23,8 @@ pub const SINK_STATE: u32 = 0u32;
 /// # Usage
 ///
 /// ```rust
-/// # extern crate levenshtein_automata;
-/// # use levenshtein_automata::{LevenshteinAutomatonBuilder, Distance};
-/// # use levenshtein_automata::SINK_STATE;
+/// # use veloci_levenshtein_automata::{LevenshteinAutomatonBuilder, Distance};
+/// # use veloci_levenshtein_automata::SINK_STATE;
 /// # fn main() {
 /// #   // Building this factory is not free.
 /// #   let lev_automaton_builder = LevenshteinAutomatonBuilder::new(2, true);
@@ -313,7 +312,7 @@ mod tests {
 
     #[test]
     fn test_utf8_dfa_builder() {
-        let mut dfa_builder = Utf8DFABuilder::with_max_num_states(2);
+        let mut dfa_builder = Utf8DFABuilder::with_max_num_states_and_ignore_case(2, false);
         dfa_builder.add_state(0, Distance::Exact(1u8), 1);
         dfa_builder.add_state(1, Distance::Exact(0u8), 0);
         dfa_builder.set_initial_state(1u32);

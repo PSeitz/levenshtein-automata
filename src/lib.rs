@@ -7,8 +7,7 @@ the levenshtein distance from a given string.
 # Example
 
 ```rust
-# extern crate levenshtein_automata;
-use levenshtein_automata::{LevenshteinAutomatonBuilder, Distance};
+use veloci_levenshtein_automata::{LevenshteinAutomatonBuilder, Distance};
 # fn main() {
 
 // Building this factory is not free.
@@ -36,29 +35,27 @@ I also tried to explain it in the following [blog post](https://fulmicoton.com/p
 
 #![cfg_attr(test, feature(test))]
 
-
-#[cfg(feature="fst_automaton")]
+#[cfg(feature = "fst_automaton")]
 extern crate fst;
 
 #[cfg(test)]
 extern crate test;
 #[cfg(test)]
-mod tests;
-#[cfg(test)]
 mod bench;
+#[cfg(test)]
+mod tests;
 
-
-mod parametric_dfa;
 mod alphabet;
-mod levenshtein_nfa;
 mod dfa;
 mod index;
+mod levenshtein_nfa;
+mod parametric_dfa;
 
+pub use self::dfa::{DFA, SINK_STATE};
 use self::index::Index;
+pub use self::levenshtein_nfa::Distance;
 use self::levenshtein_nfa::LevenshteinNFA;
 use self::parametric_dfa::ParametricDFA;
-pub use self::dfa::{DFA, SINK_STATE};
-pub use self::levenshtein_nfa::Distance;
 
 /// Builder for Levenshtein Automata.
 ///
@@ -81,7 +78,9 @@ impl LevenshteinAutomatonBuilder {
     pub fn new(max_distance: u8, transposition_cost_one: bool) -> LevenshteinAutomatonBuilder {
         let levenshtein_nfa = LevenshteinNFA::levenshtein(max_distance, transposition_cost_one);
         let parametric_dfa = ParametricDFA::from_nfa(&levenshtein_nfa);
-        LevenshteinAutomatonBuilder { parametric_dfa: parametric_dfa }
+        LevenshteinAutomatonBuilder {
+            parametric_dfa: parametric_dfa,
+        }
     }
 
     /// Builds a Finite Determinstic Automaton to compute
@@ -94,7 +93,7 @@ impl LevenshteinAutomatonBuilder {
     /// or not.
     ///
     /// For instance for `d=2` and with transposition, `C=68`.
-    pub fn build_dfa(&self, query: &str, ignore_case:bool) -> DFA {
+    pub fn build_dfa(&self, query: &str, ignore_case: bool) -> DFA {
         self.parametric_dfa.build_dfa(query, ignore_case)
     }
 }
