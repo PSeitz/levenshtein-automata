@@ -10,7 +10,7 @@ impl FullCharacteristicVector {
         if align == 0 {
             self.0[bucket_id] & mask
         } else {
-            let left = (self.0[bucket_id] >> align);
+            let left = self.0[bucket_id] >> align;
             let right = self.0[bucket_id + 1] << (32 - align) as u32;
             (left | right) & mask
         }
