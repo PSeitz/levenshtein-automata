@@ -1,7 +1,7 @@
 [package]
-name = "levenshtein_automata"
+name = "veloci_levenshtein_automata"
 version = "0.1.0"
-authors = ["Paul Masurel <paul.masurel@gmail.com>"]
+authors = ["Paul Masurel <paul.masurel@gmail.com>","Pascal Seitz <pascal.seitz@gmail.com>"]
 
 [dependencies]
 fst = {version="0.4", optional=true, default-features=false}
