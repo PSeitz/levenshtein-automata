@@ -3,7 +3,6 @@ use super::Distance;
 /// Sink state. See [DFA](./index.html)
 pub const SINK_STATE: u32 = 0u32;
 
-
 /// Implementation of a Deterministic Finite Automaton for
 /// a Levenshtein Automaton targeting UTF-8 encoded strings.
 ///
@@ -49,7 +48,6 @@ pub struct DFA {
     initial_state: u32,
 }
 
-
 impl DFA {
     /// Returns the initial state
     pub fn initial_state(&self) -> u32 {
@@ -84,9 +82,9 @@ impl DFA {
     }
 }
 
-#[cfg(feature="fst_automaton")]
+#[cfg(feature = "fst_automaton")]
 use fst;
-#[cfg(feature="fst_automaton")]
+#[cfg(feature = "fst_automaton")]
 impl fst::Automaton for DFA {
     type State = u32;
 
@@ -116,7 +114,6 @@ fn fill(dest: &mut [u32], val: u32) {
         *d = val;
     }
 }
-
 
 pub struct Utf8DFAStateBuilder<'a> {
     dfa_builder: &'a mut Utf8DFABuilder,
@@ -152,9 +149,9 @@ impl<'a> Utf8DFAStateBuilder<'a> {
             from_state_id_decoded = intermediary_state_id;
         }
 
-        let to_state_id_decoded = self.dfa_builder.get_or_allocate(
-            Utf8StateId::original(to_state_id),
-        );
+        let to_state_id_decoded = self
+            .dfa_builder
+            .get_or_allocate(Utf8StateId::original(to_state_id));
         self.add_transition_id(
             from_state_id_decoded,
             bytes[bytes.len() - 1],
@@ -169,15 +166,14 @@ impl<'a> Utf8DFAStateBuilder<'a> {
             if lower_char != upper_char {
                 self._add_transition(lower_char, to_state_id);
                 self._add_transition(upper_char, to_state_id);
-            }else{
+            } else {
                 self._add_transition(chr, to_state_id);
             }
-        }else{
+        } else {
             self._add_transition(chr, to_state_id);
         }
     }
 }
-
 
 /// `Utf8DFABuilder` makes it possible to define a DFA
 /// that takes unicode character, and build a `DFA`
@@ -192,7 +188,6 @@ pub struct Utf8DFABuilder {
     ignore_case: bool,
 }
 
-
 #[derive(Eq, PartialEq, Hash, Clone, Copy)]
 struct Utf8StateId(u32);
 impl Utf8StateId {
@@ -205,13 +200,15 @@ impl Utf8StateId {
     }
 }
 
-
 impl Utf8DFABuilder {
     /// Creates a new dictionary.
     ///
     /// The `builder` will only accept `state_id` that are
     /// lower than `max_num_states`.
-    pub fn with_max_num_states(max_num_states: usize) -> Utf8DFABuilder {
+    pub fn with_max_num_states_and_ignore_case(
+        max_num_states: usize,
+        ignore_case: bool,
+    ) -> Utf8DFABuilder {
         Utf8DFABuilder {
             index: vec![None; max_num_states * 4 + 3],
             distances: Vec::with_capacity(100),
@@ -219,32 +216,15 @@ impl Utf8DFABuilder {
             initial_state: 0u32,
             num_states: 0u32,
             max_num_states: max_num_states as u32,
-            ignore_case: false,
-        }
-    }
-    /// Creates a new dictionary.
-    ///
-    /// The `builder` will only accept `state_id` that are
-    /// lower than `max_num_states`.
-    pub fn with_max_num_states_and_ignore_case(max_num_states: usize, ignore_case:bool) -> Utf8DFABuilder {
-        Utf8DFABuilder {
-            index: vec![None; max_num_states * 4 + 3],
-            distances: Vec::with_capacity(100),
-            transitions: Vec::with_capacity(100),
-            initial_state: 0u32,
-            num_states: 0u32,
-            max_num_states: max_num_states as u32,
-            ignore_case: ignore_case,
+            ignore_case,
         }
     }
 
     fn allocate(&mut self) -> u32 {
         let new_state = self.num_states;
         self.num_states += 1;
-        self.distances.resize(
-            new_state as usize + 1,
-            Distance::AtLeast(255),
-        );
+        self.distances
+            .resize(new_state as usize + 1, Distance::AtLeast(255));
         self.transitions.resize(new_state as usize + 1, [0u32; 256]);
         new_state
     }
@@ -328,8 +308,8 @@ impl Utf8DFABuilder {
 #[cfg(test)]
 mod tests {
 
-    use super::Utf8DFABuilder;
     use super::Distance;
+    use super::Utf8DFABuilder;
 
     #[test]
     fn test_utf8_dfa_builder() {
