@@ -2,6 +2,12 @@
 name = "veloci_levenshtein_automata"
 version = "0.1.0"
 authors = ["Paul Masurel <paul.masurel@gmail.com>","Pascal Seitz <pascal.seitz@gmail.com>"]
+edition = "2018"
+license = "MIT"
+categories = ["text-processing"]
+description = """Creates Levenshtein Automata in an efficient manner."""
+readme = "README.md"
+keywords = ["levenshtein", "automaton", "automata", "fuzzy"]
 
 [dependencies]
 fst = {version="0.4", optional=true, default-features=false}
